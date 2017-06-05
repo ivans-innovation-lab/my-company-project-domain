@@ -6,12 +6,12 @@
 	<packaging>jar</packaging>
 	<name>my company blog domain</name>
 	<description>Project project domain - Command side</description>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	
 	<parent>
 		<groupId>com.idugalic</groupId>
 		<artifactId>my-company-parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
 	
 	<scm>
@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>com.idugalic</groupId>
 			<artifactId>my-company-common-project</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.axonframework</groupId>
