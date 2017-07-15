@@ -15,14 +15,14 @@ jobs:
           key: my-company-project-domain-{{ checksum "pom.xml" }}
 
       - run: 
-          name: Install maven artifact - local repository
+          name: Install maven artifact
           command: |
             if [ "${CIRCLE_BRANCH}" != "master" ]; then
               mvn -s .circleci/maven.settings.xml install -P idugalic-cloud
             fi
             
       - deploy:
-          name: Deploy maven artifact - remote repository
+          name: Deploy maven artifact
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               mvn -s .circleci/maven.settings.xml deploy -P idugalic-cloud
@@ -33,7 +33,8 @@ jobs:
             - ~/.m2
           key: my-company-project-domain-{{ checksum "pom.xml" }}
       
-      - run: 
+      - run:
+          name: Collecting test results
           command: |
             mkdir -p junit/
             find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} junit/ \;
@@ -45,9 +46,11 @@ jobs:
       - store_artifacts:
           path: junit/
           
-      - run: |
-          mkdir -p artifacts/
-          find . -type f -regex ".*/target/.*jar" -exec cp {} artifacts/ \;
+      - run:
+          name: Collecting artifacts
+          command: |
+            mkdir -p artifacts/
+            find . -type f -regex ".*/target/.*jar" -exec cp {} artifacts/ \;
      
       - store_artifacts:
           path: artifacts/
