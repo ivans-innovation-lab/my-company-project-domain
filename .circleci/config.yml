@@ -1,0 +1,64 @@
+defaults: &defaults
+  working_directory: /home/circleci/my-company-project-domain
+  docker:
+    - image: circleci/openjdk:8-jdk-browsers
+    
+version: 2
+jobs:
+  build:
+    <<: *defaults
+    steps:
+
+      - checkout
+
+      - restore_cache:
+          key: my-company-project-domain-{{ checksum "pom.xml" }}
+
+      - run: 
+          name: Install maven artifact - local repository
+          command: |
+            if [ "${CIRCLE_BRANCH}" != "master" ]; then
+              mvn -s .circleci/maven.settings.xml install -P idugalic-cloud
+            fi
+            
+      - deploy:
+          name: Deploy maven artifact - remote repository
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              mvn -s .circleci/maven.settings.xml deploy -P idugalic-cloud
+            fi
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: my-company-project-domain-{{ checksum "pom.xml" }}
+      
+      - run: 
+          command: |
+            mkdir -p junit/
+            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} junit/ \;
+          when: always
+          
+      - store_test_results:
+          path: junit/
+          
+      - store_artifacts:
+          path: junit/
+          
+      - run: |
+          mkdir -p artifacts/
+          find . -type f -regex ".*/target/.*jar" -exec cp {} artifacts/ \;
+     
+      - store_artifacts:
+          path: artifacts/
+          
+     # - persist_to_workspace:
+     #     root: artifacts/
+     #     paths:
+     #       - .
+ 
+workflows:
+  version: 2
+  my-company-project-domain-workflow:
+    jobs:
+      - build
