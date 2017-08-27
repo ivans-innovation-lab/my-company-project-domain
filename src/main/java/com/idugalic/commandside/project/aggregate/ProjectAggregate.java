@@ -22,7 +22,7 @@ import static org.axonframework.commandhandling.model.AggregateLifecycle.apply;
  *
  */
 @Aggregate
-public class ProjectAggregate {
+class ProjectAggregate {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProjectAggregate.class);
 
