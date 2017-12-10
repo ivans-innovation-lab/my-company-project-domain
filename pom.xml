@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>my-company-project-domain</artifactId>
 	<packaging>jar</packaging>
-	<name>my company blog domain</name>
+	<name>my company project domain</name>
 	<description>Project project domain - Command side</description>
 	<version>1.0.0</version>
 	
