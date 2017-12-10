@@ -1,8 +1,12 @@
 package com.idugalic.commandside.project.aggregate;
 
+import com.idugalic.commandside.project.command.ActivateProjectCommand;
 import com.idugalic.commandside.project.command.CreateProjectCommand;
+import com.idugalic.commandside.project.command.DeactivateProjectCommand;
 import com.idugalic.commandside.project.command.UpdateProjectCommand;
+import com.idugalic.common.project.event.ProjectActivatedEvent;
 import com.idugalic.common.project.event.ProjectCreatedEvent;
+import com.idugalic.common.project.event.ProjectDeactivatedEvent;
 import com.idugalic.common.project.event.ProjectUpdatedEvent;
 
 import java.util.ArrayList;
@@ -38,6 +42,7 @@ class ProjectAggregate {
     private String siteUrl;
     private String category;
     private String description;
+    private Boolean active;
     private List<ProjectRelease> releaseList = new ArrayList<ProjectRelease>();
 
     /**
@@ -60,17 +65,25 @@ class ProjectAggregate {
      */
     @CommandHandler
     public ProjectAggregate(CreateProjectCommand command) {
-        LOG.debug("Command: 'CreateProjectCommand' received.");
-        LOG.debug("Queuing up a new ProjectCreatedEvent for project '{}'", command.getId());
         apply(new ProjectCreatedEvent(command.getId(), command.getAuditEntry(), command.getName(), command.getRepoUrl(), command.getSiteUrl(), command.getCategory(), command
                 .getDescription()));
     }
 
     @CommandHandler
     public void updateProject(UpdateProjectCommand command) {
-        LOG.debug("Command: 'UpdateProjectCommand' received.");
-        LOG.debug("Queuing up a new ProjectUpdatedEvent for project '{}'", command.getId());
         apply(new ProjectUpdatedEvent(command.getId(), command.getAuditEntry(), command.getName(), command.getRepoUrl(), command.getSiteUrl(), command.getDescription()));
+
+    }
+
+    @CommandHandler
+    public void activateProject(ActivateProjectCommand command) {
+        apply(new ProjectActivatedEvent(command.getId(), command.getAuditEntry()));
+
+    }
+
+    @CommandHandler
+    public void deActivateProject(DeactivateProjectCommand command) {
+        apply(new ProjectDeactivatedEvent(command.getId(), command.getAuditEntry()));
 
     }
 
@@ -91,7 +104,7 @@ class ProjectAggregate {
         this.name = event.getName();
         this.repoUrl = event.getRepoUrl();
         this.siteUrl = event.getSiteUrl();
-        LOG.debug("Applied: 'ProjectCreatedEvent' [{}]", event.getId());
+        this.active = Boolean.TRUE;
     }
 
     @EventSourcingHandler
@@ -100,7 +113,16 @@ class ProjectAggregate {
         this.name = event.getName();
         this.repoUrl = event.getRepoUrl();
         this.siteUrl = event.getSiteUrl();
-        LOG.debug("Applied: 'ProjectUpdatedEvent' [{}]", event.getId());
+    }
+
+    @EventSourcingHandler
+    public void on(ProjectActivatedEvent event) {
+        this.active = Boolean.TRUE;
+    }
+
+    @EventSourcingHandler
+    public void on(ProjectDeactivatedEvent event) {
+        this.active = Boolean.FALSE;
     }
 
     public static Logger getLog() {
