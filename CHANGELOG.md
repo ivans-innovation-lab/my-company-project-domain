@@ -13,10 +13,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 [1.1.0]: https://github.com/ivans-innovation-lab/my-company-project-domain/compare/1.0.0...1.1.0
 
+### Added
+
+- `ActivateProjectCommand.java`
+- `DeactivateProjectCommand.java`
+
 ### Changed
 
--   Version upgraded to [1.1.0]
--   Vesrion of ' my-company-common-project' dependency upgraded to [1.1.0]
+-  Version upgraded to [1.1.0]
+-  Vesrion of ' my-company-common-project' dependency upgraded to [1.1.0]
+-  ProjectAggregate extended with additional attribute 'active'
 
 ## [1.0.0][] - 2017-10-15
 
